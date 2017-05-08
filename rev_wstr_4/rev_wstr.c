@@ -6,13 +6,12 @@
 /*   By: fgallois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/04 15:25:34 by fgallois          #+#    #+#             */
-/*   Updated: 2017/04/28 17:23:46 by fgallois         ###   ########.fr       */
+/*   Updated: 2017/05/08 14:37:53 by fgallois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 void ft_putchar(char c)
 {
@@ -43,10 +42,15 @@ void		ft_bzero(void *b, int n)
 	}
 }
 
+int		is_space(char const *str, int i)
+{
+	return (str[i] == ' ' || str[i] == '\n' || str[i] == '\t' || str[i] == '\0');
+}
+
 int		ft_strlen(char const *str)
 {
 	int i;
-	
+
 	i = 0;
 	while (str[i])
 		i++;
@@ -68,7 +72,7 @@ char	*ft_strnew(size_t size)
 }
 
 
-char	*ft_strsub(char const *s, unsigned int start, size_t len)
+char	*ft_strsub(char const *s, int start, int len)
 {
 	char *p;
 	int i;
@@ -98,15 +102,15 @@ static int		ft_strlent(char **tab)
 static int		ft_nbremots(char const *s)
 {
 	size_t	compteur;
-	size_t	i;
+	int	i;
 
 	i = 0;
 	compteur = 0;
 	while (i < ft_strlen(s))
 	{
-		if (i == 0 && s[i] != ' ')
+		if (i == 0 && is_space(s, i) == 0)
 			compteur++;
-		if (s[i] == ' ' && s[i + 1] != ' ' && s[i + 1] != '\0')
+		if (is_space(s, i) == 1 && is_space(s, i + 1) == 0)
 			compteur++;
 		i++;
 	}
@@ -123,12 +127,12 @@ static char		**ft_remplissage(char const *s, char **tab)
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == ' ')
+		if (is_space(s, i) == 1)
 			i++;
-		else if (s[i] != ' ')
+		else if (is_space(s, i) == 0)
 		{
 			start = i;
-			while (s[i] && s[i] != ' ')
+			while (s[i] && is_space(s, i) == 0)
 				i++;
 			tab[index] = ft_strsub(s, start, i - start);
 			index++;
@@ -151,22 +155,28 @@ char			**ft_strsplit(char const *s)
 	return (ft_remplissage(s, tab));
 }
 
-int		main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	char **split;
 	int len;
-	
+
 	if (argc != 2)
 		ft_putchar('\n');
 	else
 	{
 		split = ft_strsplit(argv[1]);
 		len = ft_strlent(split);
-		while (len--)
+		if (!split || len == 0)
+			ft_putchar('\n');
+		else
 		{
-			ft_putstr(split[len]);
-			if (len > 0)
-				ft_putchar(' ');
+			while (len--)
+			{
+				ft_putstr(split[len]);
+				if (len > 0)
+					ft_putchar(' ');
+			}
+			ft_putchar('\n');
 		}
 	}
 	return (0);

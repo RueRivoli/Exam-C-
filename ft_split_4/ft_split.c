@@ -6,13 +6,11 @@
 /*   By: fgallois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/01 14:12:16 by fgallois          #+#    #+#             */
-/*   Updated: 2017/05/01 15:59:11 by fgallois         ###   ########.fr       */
+/*   Updated: 2017/05/08 20:29:12 by fgallois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
 
 int		ft_strlen(char *str)
 {
@@ -24,31 +22,21 @@ int		ft_strlen(char *str)
 	return (i);
 }
 
-void	ft_putchar(char c)
+
+int		is_space(char *str, int i)
 {
-	write(1, &c, 1);
+	return (str[i] == ' '  || str[i] == '\t' || str[i] == '\n' || str[i] == '\0');
 }
 
-void	ft_putstr(char *str)
-{
-	int i;
-	i = 0;
-	while (str[i])
-	{
-		ft_putchar(str[i]);
-		i++;
-	}
-}
-	
 char	*ft_strsub(char *s, int start, int len)
 {
 	int i;
 	char *str;
-	
+
 	if (s == NULL || start + len > ft_strlen(s))
 		return (NULL);
 	if (!(str = (char*)malloc(sizeof(char) * len + 1)))
-			return (NULL);
+		return (NULL);
 	i = 0;
 	while (i < len)
 	{
@@ -68,9 +56,9 @@ int		number_of_words(char *str)
 	i = 0;
 	while (i < ft_strlen(str) - 1)
 	{
-		if (str[i] == ' ' && str[i + 1] != ' ')
+		if (is_space(str, i) == 1 && is_space(str, i + 1) == 0)
 			count++;
-		if (i == 0 && str[i] != ' ')
+		if (i == 0 && is_space(str, i) == 0)
 			count++;
 		i++;
 	}
@@ -87,60 +75,38 @@ char	**fill(char **tab, char *phrase)
 	i = 0;
 	while (i < ft_strlen(phrase) - 1)
 	{
-		if (phrase[i] == ' ' && phrase[i + 1] != ' ')
+		if (is_space(phrase, i) == 1 && is_space(phrase, i + 1) == 0)
 		{
 			j = 0;
 			i++;
-			while (phrase[i + j] != ' ')
-				j++;
-		tab[count] = ft_strsub(phrase, i, j );
-		count++;
-		}
-		if (i == 0 && phrase[i] != ' ')
-		{
-			j = 0;
-			while (phrase[i + j] != ' ')
+			while (is_space(phrase, i + j) == 0)
 				j++;
 			tab[count] = ft_strsub(phrase, i, j);
 			count++;
 		}
-			i++;
+		if (i == 0 && is_space(phrase, i) == 0)
+		{
+			j = 0;
+			while (is_space(phrase, i + j) == 0)
+				j++;
+			tab[count] = ft_strsub(phrase, i, j);
+			count++;
+		}
+		i++;
 	}
 	tab[count] = NULL;
 	return (tab);
 }
 
-void		print_result(char **tab)
+char	**ft_split(char *str)
 {
-	int i;
+	char **tab;
 
-	i = 0;
-	while (tab[i])
-	{
-		ft_putstr(tab[i]);
-		ft_putchar(' ');
-		i++;
-	}
-}
-char		**ft_split(char *mot)
-{
-	char **str;
-	
-	if (mot == NULL)
+	if (!str)
 		return (NULL);
-	if (!(str = (char**)malloc(sizeof(char*) * number_of_words(mot) + 1)))
+	if (!(tab = (char**)malloc(sizeof(char*) * number_of_words(str) + 1)))
 		return (NULL);
-	str = fill(str, mot);
-	return (str);
+	tab = fill(tab, str);
+	return (tab);
 }
 
-int		main(void)
-{
-	char **s;
-	char *mot;
-
-	mot = "chenille vaudou a une epaule gauche   ";
-	s = ft_split(mot);
-	print_result(s);
-	return (0);
-}

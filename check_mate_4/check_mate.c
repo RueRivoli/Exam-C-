@@ -1,15 +1,6 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
-
-typedef struct s_list
-{
-	int x;
-	int y;
-	int len_x;
-	int len_y;
-	int nb_king;
-}		t_list;
+#include "check_mate.h"
 
 
 void	ft_putchar(char c)
@@ -58,7 +49,6 @@ int	ft_strlen(char *str)
 int	check_input(t_list *lst, int argc, char **argv)
 {
 	int i;
-	int len;
 	i = 2;
 	if (lst->len_y != argc - 1)
 	{	
